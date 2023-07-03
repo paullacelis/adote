@@ -1,4 +1,4 @@
-#!/home/ana/Documentos/GitHub/adote/venv/bin/python3
+#!/home/ana/Área de Trabalho/adote2/venv/bin/python3
 # When the django-admin.py deprecation ends, remove this script.
 import warnings
 

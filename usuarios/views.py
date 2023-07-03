@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.messages import constants
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 
@@ -15,40 +17,46 @@ def cadastro(request):
         senha = request.POST.get('senha')
         confirmar_senha = request.POST.get('confirmar_senha')
 
+        if len(nome.strip()) == 0 or len(email.strip()) == 0 or len(senha.strip()) == 0 or len(confirmar_senha.strip()) == 0:
+            messages.add_message(request, messages.ERROR, 'preencha todos os campos.')
+            return render(request, 'cadastro.html')
+        
         if senha != confirmar_senha:
-            messages.error(request, 'Digite duas senhas iguais.')
-        elif not all([nome, email, senha, confirmar_senha]):
-            messages.error(request, 'Preencha todos os campos.')
-        else:
-            try:
-                User.objects.create_user(
-                    username=nome,
-                    email=email,
-                    password=senha,
-                )
-                messages.success(request, 'Usuário criado com sucesso.')
-            except Exception as e:
-                messages.error(request, f'Erro interno do sistema: {str(e)}')
+            messages.add_message(request, messages.ERROR, 'Digite duas senhas iguais.')
 
-        return render(request, 'cadastro.html')
+            return render(request, 'cadastro.html')
+
+        try:
+            user = User.objects.create_user(
+                username=nome,
+                email=email,
+                password=senha,
+            )
+            messages.add_message(request, messages.SUCCESS, 'usuario cadastrado.')
+
+            return render(request, 'cadastro.html')
+        except:
+            messages.add_message(request, messages.ERROR, 'Erro interno do sistema.')
+            return render(request, 'cadastro.html')
+        
 def logar(request):
     if request.user.is_authenticated:
         return redirect('/divulgar/novo_pet')
     if request.method == "GET":
-        return render(request, 'login.html')
-    
+        return render(request, 'login.html')        
     elif request.method == "POST":
         nome = request.POST.get('nome')
         senha = request.POST.get('senha')
         user = authenticate(username=nome,
-                            password=senha)
-
+                      password=senha)
+        
         if user is not None:
-            login(request, user)
-            return redirect('/divulgar/novo_pet')
+          login(request, user)
+          return redirect('/divulgar/novo_pet')
         else:
-            messages.error(request, 'Usuário ou senha inválidos.')
-            return render(request, 'login.html')
+          messages.add_message(request, constants.ERROR, 'Usuário ou senha inválidos')
+          return render(request, 'login.html')
+        
 def sair(request):
     logout(request)
-    return redirect('/auth/login')
+    return redirect('/auth/login')        

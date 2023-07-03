@@ -1,4 +1,6 @@
-#!/home/ana/Documentos/GitHub/adote/venv/bin/python3
+#!/bin/sh
+'''exec' "/home/ana/Área de Trabalho/adote2/venv/bin/python3" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys
