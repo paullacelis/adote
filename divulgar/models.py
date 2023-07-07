@@ -14,7 +14,7 @@ class Tag(models.Model):
         return self.tag
     
 class Pet(models.Model):
-    choices_status = (('p', 'Para adocao'),
+    choices_status = (('P', 'Para adocao'),
                       ('A', 'Adotado'))
     usuario = models.ForeignKey(User, on_delete= models.DO_NOTHING)
     foto = models.ImageField(upload_to="fotos_pet")

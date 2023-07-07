@@ -24,7 +24,7 @@ def novo_pet(request):
          tags = request.POST.getlist('tags')
          raca = request.POST.get('raca')
 
- #TODO: Validar dados
+ #TODO: Validar dados e configurar mensagem de erro 
 
          pet = Pet(
             usuario=request.user,
@@ -47,6 +47,14 @@ def novo_pet(request):
 
          tags = Tag.objects.all()
          racas = Raca.objects.all()
-         messages.add_message(request, constants.SUCCESS, 'Novo pet cadastrado')
+         #messages.add_message(request, constants.SUCCESS, 'Novo pet cadastrado')
+
          return render(request, 'novo_pet.html', {'tags': tags, 'racas': racas})
+        
+@login_required
+def seus_pets(request):
+    if request.method == "GET":
+        pets = Pet.objects.filter(usuario=request.user)
+        return render(request, 'seus_pets.html', {'pets': pets})    
+    
         
