@@ -4,8 +4,9 @@ from django.http import HttpResponse
 from . import views
 from django.contrib.auth.decorators import login_required
 from . models import Tag, Raca, Pet 
-
-
+from django.contrib import messages
+from django.contrib.messages import constants
+from django.shortcuts import redirect
 
 @login_required
 def novo_pet(request):
@@ -41,13 +42,13 @@ def novo_pet(request):
         
          for tag_id in tags:
              tag = Tag.objects.get(id=tag_id)
-             pet.tags.add(tag)
+             pet.tag.add(tag)
 
          pet.save()
 
          tags = Tag.objects.all()
          racas = Raca.objects.all()
-         #messages.add_message(request, constants.SUCCESS, 'Novo pet cadastrado')
+         messages.add_message(request, constants.SUCCESS, 'Novo pet cadastrado')
 
          return render(request, 'novo_pet.html', {'tags': tags, 'racas': racas})
         
@@ -57,4 +58,12 @@ def seus_pets(request):
         pets = Pet.objects.filter(usuario=request.user)
         return render(request, 'seus_pets.html', {'pets': pets})    
     
-        
+@login_required
+def remover_pet(request, id):
+   pet = Pet.objects.get(id=id)
+   if not pet.usuario == request.user:
+        messages.add_message(request, constants.ERROR, 'Esse pet não é seu!')
+        return redirect('/divulgar/seus_pets')
+   pet.delete()
+   messages.add_message(request, constants.SUCCESS, 'Removido com sucesso.')
+   return redirect('/divulgar/seus_pets')
