@@ -142,3 +142,5 @@ MESSAGE_TAGS = {
     constants.WARNING: 'alert-warning',
     }  
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+#Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
